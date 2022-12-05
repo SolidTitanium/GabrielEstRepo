@@ -10,21 +10,37 @@ M_DATA = os.getenv("MADRID_DATA")
 M_PY_DATA_PRE = os.getenv("MADRID_DATA_PY_PREFIX")
 M_STAT_DATA = os.getenv("STATIONS_DATA")
 C_DATA = os.getenv("CITY_TEMP_DATA")
-TARGET_STAT = "28079004"
-ValidStations = ["28079008", "28079016", "28079018", "28079024", "28079039"]
+
+#Deprecated Constants (shouldn't be here in the first place)
+# TARGET_STAT = "28079004"
+# ValidStations = ["28079008", "28079016", "28079018", "28079024", "28079039"]
 
 #City temp data curated
 with open(C_DATA) as data:
     df = pd.read_csv(data, dtype = str)
     df_mad = df[df.City == "Madrid"]
     df_mad = df_mad["2001" <= df_mad["Year"]]
-    df_mad = df_mad[df_mad["Year"] <= "2012"]
+    df_mad = df_mad[df_mad["Year"] <= "2018"]
 
     df_tms = df_mad[df_mad["AvgTemperature"] != "-99"]
+    df_tms = df_tms.drop(columns = "State")
 
 #City O3 data curated
 with open("D:\PyMyScripts\GabrielEst\Mybin\GabrielEstRepo\output\df_n.csv") as data:
-    df_c = pd.read_csv(data, dtype = str)
+    df_oms = pd.read_csv(data, dtype = str)
+
+print("Ozone Data")
+print(df_oms.info())
+print(df_oms.head())
+
+print("-------------")
+
+print("Temperature Data")
+print(df_tms.info())
+print(df_tms.head())
+
+print(type(df_oms.date.loc[0]))
+print(df_oms.date.loc[0])
 
 
 
