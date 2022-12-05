@@ -21,33 +21,30 @@ TARGET_STAT = "28079004"
 
 #     df_tms = df_mad_1_12[df_mad_1_12["AvgTemperature"] != "-99"]
 
-with open(M_STAT_DATA) as data:
-    df = pd.read_csv(data, dtype = str)
-    stat_ids = tuple(_ for _ in df.id)
+ValidStations = ["28079008", "28079016", "28079018", "28079024", "28079039"]
 
-ValidStations = list(map(lambda x: int(x), stat_ids))
-print(repr(ValidStations))
-InvalidStation = []
-
-for id in stat_ids:
+for id in ValidStations:
     for DATA_SUFF in os.listdir(M_PY_DATA_PRE):
         datapath = os.path.join(M_PY_DATA_PRE, DATA_SUFF)
         with open(datapath) as data:
             df = pd.read_csv(data, dtype = str)
             df = df[["date", "station", "O_3"]]
             df = df[df["station"] == id]
-            if df["O_3"].any() == False:
-                ValidStations.pop(ValidStations.index(int(id)))
-                InvalidStation.append(int(id))
-                break
 
-            # if DATA_SUFF == "madrid_2001.csv":
-            #     df_m = df
-            # else:
-            #     df_m = pd.concat([df_m, df])
+            if DATA_SUFF == "madrid_2001.csv":
+                df_m = df
+            else:
+                df_m = pd.concat([df_m, df])
+    if id == "28079008":
+        df_n = df_m
+    else:
+        df_n = pd.concat([df_n, df_m])
 
-print("VALID: ", ValidStations)
-print("INVALID: ", InvalidStation)
+df_n.to_csv(r"D:\PyMyScripts\GabrielEst\Mybin\GabrielEstRepo\output\df_n.csv")
+
+print(df_n.O_3.astype(float).describe())
+print(df_n.head())
+print(df_n.tail())
 
 # for DATA_SUFF in os.listdir(M_PY_DATA_PRE):
 #     datapath = os.path.join(M_PY_DATA_PRE, DATA_SUFF)
