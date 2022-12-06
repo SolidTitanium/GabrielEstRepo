@@ -66,7 +66,7 @@ df_oms = df_oms.sort_values("date").reset_index()
 df_oms = df_oms.drop(columns = ["index", "Unnamed: 0", "station"])
 df_oms["O_3"] = df_oms["O_3"].astype(float)
 
-#Averge the measurings in the same day, drop NaN values and reset index,
+#Average the measurings in the same day, drop NaN values and reset index,
 #df_omss is the desired dataframe for ozone data
 df_oms = df_oms.groupby("date", as_index = False).mean().dropna()
 df_omss = df_oms.reset_index().drop(columns = "index")
