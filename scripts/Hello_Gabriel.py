@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
+import pymannkendall as mk
 
 load_dotenv()
 
@@ -32,12 +33,10 @@ with open(C_DATA) as data:
     df_tms = df_tms.drop(columns = ["index", "Region", "Country", "City", "Month", "Day", "Year"])
     df_tms = df_tms.reindex(columns = ["date", "AvgTemperature"])
     df_tms = df_tms[df_tms["date"] <= datetime(2018,5,1)]
-    df_tms = df_tms.groupby("date", as_index = False).mean()
+    df_tms = df_tms.groupby("date", as_index = False).mean().dropna()
     df_tmss = df_tms.reset_index().drop(columns = "index")
 
-
-
-
+    df_tmssg = df_tmss.groupby(pd.Grouper(key = "date", freq = "M"), as_index = False).mean()
 
 #City O3 data curated
 with open("D:\PyMyScripts\GabrielEst\Mybin\GabrielEstRepo\output\df_n.csv") as data:
@@ -48,14 +47,24 @@ with open("D:\PyMyScripts\GabrielEst\Mybin\GabrielEstRepo\output\df_n.csv") as d
     df_oms = df_oms.reset_index()
     df_oms = df_oms.drop(columns = ["index", "Unnamed: 0", "station"])
     df_oms["O_3"] = df_oms["O_3"].astype(float)
-    df_oms = df_oms.groupby("date", as_index = False).mean()
+    df_oms = df_oms.groupby("date", as_index = False).mean().dropna()
     df_omss = df_oms.reset_index().drop(columns = "index")
 
+    df_omssg = df_omss.groupby(pd.Grouper(key = "date", freq = "M"), as_index = False).mean()
 
+#END OF CLEANING
 
+print(mk.seasonal_test(df_tmssg["AvgTemperature"], period = 12), "\n")
+print("---------------------")
+print(mk.seasonal_test(df_omssg["O_3"], period = 12), "\n")
 
+#END OF ANALYSIS
 
+df_tmss.plot(x = "date", y = "AvgTemperature")
+df_omss.plot(x = "date", y = "O_3")
+plt.show()
 
+#END OF PLOT
 
 
 
@@ -69,10 +78,10 @@ with open("D:\PyMyScripts\GabrielEst\Mybin\GabrielEstRepo\output\df_n.csv") as d
 # print(df_tms.info())
 # print(df_tms.head())
 
-print(df_tms.head())
-print(df_tms.tail())
-print(df_oms.head())
-print(df_oms.tail())
+# print(df_tmss.head())
+# print(df_tmss.tail())
+# print(df_omss.head())
+# print(df_omss.tail())
 
 
 
