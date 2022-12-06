@@ -24,24 +24,37 @@ with open(C_DATA) as data:
 
     df_tms = df_mad[df_mad["AvgTemperature"] != "-99"]
     df_tms = df_tms.drop(columns = "State")
+    df_tms = df_tms.assign(date = df_tms["Year"] + "-" + df_tms["Month"] + "-" + df_tms["Day"])
+    df_tms["date"] = pd.to_datetime(df_tms["date"], format = r"%Y-%m-%d")
 
 #City O3 data curated
 with open("D:\PyMyScripts\GabrielEst\Mybin\GabrielEstRepo\output\df_n.csv") as data:
     df_oms = pd.read_csv(data, dtype = str)
+    df_oms["date"] = df_oms["date"].apply(lambda x: x[:10])
+    df_oms["date"] = pd.to_datetime(df_oms["date"], format = r"%Y-%m-%d")
 
-print("Ozone Data")
-print(df_oms.info())
-print(df_oms.head())
+# print("Ozone Data")
+# print(df_oms.info())
+# print(df_oms.head())
 
-print("-------------")
+# print("-------------")
 
-print("Temperature Data")
-print(df_tms.info())
-print(df_tms.head())
+# print("Temperature Data")
+# print(df_tms.info())
+# print(df_tms.head())
 
-print(type(df_oms.date.loc[0]))
-print(df_oms.date.loc[0])
-
+i = 0
+flag = False
+for date_o in df_oms["date"]:
+    for date_t in df_tms["date"]:
+        if date_o == date_t:
+            print(str(date_o) + " -|- " + str(date_t))
+            i = i + 1
+        if i > 100:
+            flag = True
+            break
+    if flag:
+        break
 
 
 
