@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from datetime import datetime
 
 load_dotenv()
 
@@ -26,12 +27,37 @@ with open(C_DATA) as data:
     df_tms = df_tms.drop(columns = "State")
     df_tms = df_tms.assign(date = df_tms["Year"] + "-" + df_tms["Month"] + "-" + df_tms["Day"])
     df_tms["date"] = pd.to_datetime(df_tms["date"], format = r"%Y-%m-%d")
+    df_tms = df_tms.sort_values("date")
+    df_tms = df_tms.reset_index()
+    df_tms = df_tms.drop(columns = ["index", "Region", "Country", "City", "Month", "Day", "Year"])
+    df_tms = df_tms.reindex(columns = ["date", "AvgTemperature"])
+    df_tms = df_tms[df_tms["date"] <= datetime(2018,5,1)]
+    df_tms = df_tms.groupby("date", as_index = False).mean()
+    df_tmss = df_tms.reset_index().drop(columns = "index")
+
+
+
+
 
 #City O3 data curated
 with open("D:\PyMyScripts\GabrielEst\Mybin\GabrielEstRepo\output\df_n.csv") as data:
     df_oms = pd.read_csv(data, dtype = str)
     df_oms["date"] = df_oms["date"].apply(lambda x: x[:10])
     df_oms["date"] = pd.to_datetime(df_oms["date"], format = r"%Y-%m-%d")
+    df_oms = df_oms.sort_values("date")
+    df_oms = df_oms.reset_index()
+    df_oms = df_oms.drop(columns = ["index", "Unnamed: 0", "station"])
+    df_oms["O_3"] = df_oms["O_3"].astype(float)
+    df_oms = df_oms.groupby("date", as_index = False).mean()
+    df_omss = df_oms.reset_index().drop(columns = "index")
+
+
+
+
+
+
+
+
 
 # print("Ozone Data")
 # print(df_oms.info())
@@ -43,25 +69,10 @@ with open("D:\PyMyScripts\GabrielEst\Mybin\GabrielEstRepo\output\df_n.csv") as d
 # print(df_tms.info())
 # print(df_tms.head())
 
-i = 0
-flag = False
-for date_o in df_oms["date"]:
-    for date_t in df_tms["date"]:
-        if date_o == date_t:
-            print(str(date_o) + " -|- " + str(date_t))
-            i = i + 1
-        if i > 100:
-            flag = True
-            break
-    if flag:
-        break
-
-
-
-
-
-
-
+print(df_tms.head())
+print(df_tms.tail())
+print(df_oms.head())
+print(df_oms.tail())
 
 
 
